@@ -5,7 +5,7 @@ import type { Announcement } from '../types/announcement';
 const TELEGRAM_BOT_TOKEN = import.meta.env.VITE_TELEGRAM_BOT_TOKEN;
 const TELEGRAM_CHAT_ID = import.meta.env.VITE_TELEGRAM_CHAT_ID;
 const TELEGRAM_API = TELEGRAM_BOT_TOKEN ? `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}` : '';
-const APP_DOMAIN = 'https://nesttask.vercel.app'; // Replace with your actual domain
+const APP_DOMAIN = 'https://nesttask.vercel.app';
 
 export async function sendTelegramMessage(text: string, photo?: string) {
   if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) {
@@ -13,7 +13,6 @@ export async function sendTelegramMessage(text: string, photo?: string) {
   }
 
   try {
-    // If photo URL is provided, send photo with caption
     if (photo) {
       const response = await fetch(`${TELEGRAM_API}/sendPhoto`, {
         method: 'POST',
@@ -32,7 +31,6 @@ export async function sendTelegramMessage(text: string, photo?: string) {
         throw new Error('Failed to send Telegram photo message');
       }
     } else {
-      // Send text message
       const response = await fetch(`${TELEGRAM_API}/sendMessage`, {
         method: 'POST',
         headers: {
@@ -59,7 +57,31 @@ export async function sendTelegramMessage(text: string, photo?: string) {
 }
 
 export async function sendTaskNotification(task: Task) {
-  // Extract file URLs and get the first image if available
+  // Get task status emoji
+  const getStatusEmoji = (status: string) => {
+    switch (status) {
+      case 'completed': return '✅';
+      case 'in-progress': return '⏳';
+      default: return '📝';
+    }
+  };
+
+  // Get category emoji
+  const getCategoryEmoji = (category: string) => {
+    switch (category) {
+      case 'presentation': return '🎯';
+      case 'assignment': return '📚';
+      case 'quiz': return '❓';
+      case 'lab-report': return '🔬';
+      case 'lab-final': return '🧪';
+      case 'documents': return '📄';
+      case 'blc': return '🏢';
+      case 'groups': return '👥';
+      default: return '📋';
+    }
+  };
+
+  // Extract file URLs and get the first image
   const fileUrls = task.description.match(/\[.*?\]\((.*?)\)/g)?.map(match => {
     const [, url] = match.match(/\[.*?\]\((.*?)\)/) || [];
     return url;
@@ -69,24 +91,40 @@ export async function sendTaskNotification(task: Task) {
     url?.match(/\.(jpg|jpeg|png|gif|webp)$/i)
   );
 
+  // Format file section
   const fileSection = fileUrls.length 
-    ? `\n📎 <b>Attached Files:</b> ${fileUrls.length} file${fileUrls.length > 1 ? 's' : ''}`
+    ? `\n\n📎 <b>Attachments:</b>\n${fileUrls.map((url, i) => 
+        `${i + 1}. <a href="${url}">View File ${i + 1}</a>`
+      ).join('\n')}`
     : '';
 
-  const message = `
-🆕 <b>New Task Alert!</b>
+  // Process description to handle links and formatting
+  const processDescription = (text: string) => {
+    // Replace markdown-style links with HTML links
+    const withLinks = text.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>');
+    // Preserve line breaks
+    return withLinks.replace(/\n/g, '\n');
+  };
 
-📌 <b>Title:</b> ${task.name}
-📝 <b>Description:</b> ${task.description.split('\n')[0]} ${task.description.split('\n').length > 1 ? '...' : ''}
-🏷️ <b>Category:</b> #${task.category}
-📅 <b>Due Date:</b> ${formatDate(new Date(task.dueDate), 'MMMM d, yyyy')}
+  const message = `
+🔔 <b>New ${task.isAdminTask ? 'Admin ' : ''}Task Alert!</b>
+
+${getCategoryEmoji(task.category)} <b>${task.name}</b>
+${getStatusEmoji(task.status)} Status: ${task.status === 'my-tasks' ? 'To Do' : task.status === 'in-progress' ? 'In Progress' : 'Completed'}
+
+📝 <b>Description:</b>
+${processDescription(task.description)}
+
+🏷️ Category: #${task.category}
+📅 Due Date: ${formatDate(new Date(task.dueDate), 'MMMM d, yyyy')}
+⏰ Created: ${formatDate(new Date(task.createdAt), 'MMMM d, yyyy HH:mm')}
 ${task.isAdminTask ? '👑 <b>Admin Task</b>' : ''}${fileSection}
 
 🔗 <b>Quick Links:</b>
 • View Task: ${APP_DOMAIN}
 
-#NestTask #${task.category} ${task.isAdminTask ? '' : ''} #Task
-${task.isAdminTask ? '⚡️ Stay updated with NestTask!' : ''}`;
+#NestTask #${task.category} ${task.isAdminTask ? '#AdminTask' : ''} #Task
+${task.isAdminTask ? '\n⚡️ Stay updated with NestTask!' : ''}`;
 
   return sendTelegramMessage(message, imageUrl);
 }
@@ -99,12 +137,14 @@ export async function sendAnnouncementNotification(announcement: Announcement) {
 📢 <b>Important Announcement</b>
 
 🔔 <b>${announcement.title}</b>
-${announcement.content.length > 200 
-  ? announcement.content.substring(0, 200) + '...' 
-  : announcement.content}
+
+${announcement.content}
+
+⏰ Posted: ${formatDate(new Date(announcement.createdAt), 'MMMM d, yyyy HH:mm')}
 
 🔗 <b>Quick Links:</b>
 • View Details: ${APP_DOMAIN}
+• Announcements: ${APP_DOMAIN}/announcements
 
 #NestTask #Announcement #Update
 ⚡️ Stay updated with NestTask!`;
