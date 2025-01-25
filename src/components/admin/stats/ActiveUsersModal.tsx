@@ -9,19 +9,23 @@ interface ActiveUsersModalProps {
 
 export function ActiveUsersModal({ users, type, onClose }: ActiveUsersModalProps) {
   const filteredUsers = users.filter(user => {
-    const userDate = new Date(type === 'active' ? user.lastActive || user.createdAt : user.createdAt);
+    if (!user.lastActive && !user.createdAt) return false;
+    
     const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()); // Start of today
     
     if (type === 'active') {
-      // Active today - check if lastActive is from today
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      return userDate >= today;
+      // Convert lastActive to user's local timezone for comparison
+      const lastActiveDate = user.lastActive 
+        ? new Date(user.lastActive) 
+        : new Date(user.createdAt);
+      
+      // Check if the user was active today (after start of today)
+      return lastActiveDate >= today;
     } else {
       // New this week - within last 7 days
-      const weekAgo = new Date();
-      weekAgo.setDate(weekAgo.getDate() - 7);
-      return userDate >= weekAgo;
+      const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      return new Date(user.createdAt) >= weekAgo;
     }
   });
 
