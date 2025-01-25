@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
 import { Activity } from 'lucide-react';
 import type { User } from '../types/auth';
 
@@ -11,13 +10,32 @@ export function UserActivity({ users }: UserActivityProps) {
   const [recentUsers, setRecentUsers] = useState<User[]>([]);
 
   useEffect(() => {
-    // Sort users by creation date and get the 5 most recent
-    const sorted = [...users].sort((a, b) => 
-      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    ).slice(0, 5);
+    // Sort users by last active timestamp, fallback to creation date
+    const sorted = [...users].sort((a, b) => {
+      const aTime = a.lastActive ? new Date(a.lastActive).getTime() : new Date(a.createdAt).getTime();
+      const bTime = b.lastActive ? new Date(b.lastActive).getTime() : new Date(b.createdAt).getTime();
+      return bTime - aTime; // Most recent first
+    }).slice(0, 5); // Get 5 most recent users
     
     setRecentUsers(sorted);
   }, [users]);
+
+  // Format relative time
+  const getRelativeTime = (timestamp: string) => {
+    const date = new Date(timestamp);
+    const now = new Date();
+    const diff = now.getTime() - date.getTime();
+    
+    const minutes = Math.floor(diff / 60000);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    if (minutes < 1) return 'Just now';
+    if (minutes < 60) return `${minutes}m ago`;
+    if (hours < 24) return `${hours}h ago`;
+    if (days === 1) return 'Yesterday';
+    return `${days}d ago`;
+  };
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 sm:p-6 shadow-sm mb-8">
@@ -40,17 +58,25 @@ export function UserActivity({ users }: UserActivityProps) {
                   {user.name.charAt(0).toUpperCase()}
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900 dark:text-white text-sm sm:text-base">{user.name}</p>
-                  <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">{user.email}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="font-medium text-gray-900 dark:text-white text-sm sm:text-base">
+                      {user.name}
+                    </p>
+                    <span className={`px-2 py-0.5 text-xs font-medium rounded-full ${
+                      user.role === 'admin'
+                        ? 'bg-purple-100 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300'
+                        : 'bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'
+                    }`}>
+                      {user.role}
+                    </span>
+                  </div>
+                  <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+                    {user.email}
+                  </p>
                 </div>
               </div>
-              <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 ml-11 sm:ml-0">
-                {new Date(user.createdAt).toLocaleDateString('en-US', {
-                  month: 'short',
-                  day: 'numeric',
-                  hour: '2-digit',
-                  minute: '2-digit'
-                })}
+              <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 ml-11 sm:ml-0 mt-2 sm:mt-0">
+                {getRelativeTime(user.lastActive || user.createdAt)}
               </div>
             </div>
           ))}
