@@ -118,7 +118,7 @@ ${processDescription(task.description)}
 🏷️ Category: #${task.category}
 📅 Due Date: ${formatDate(new Date(task.dueDate), 'MMMM d, yyyy')}
 ⏰ Created: ${formatDate(new Date(task.createdAt), 'MMMM d, yyyy HH:mm')}
-${task.isAdminTask ? '👑 <b>Admin Task</b>' : ''}${fileSection}
+${task.isAdminTask ? '👑 <b>Admin Task</b>' : ''}
 
 🔗 <b>Quick Links:</b>
 • View Task: ${APP_DOMAIN}
