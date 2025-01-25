@@ -15,13 +15,20 @@ export function ActiveUsersModal({ users, type, onClose }: ActiveUsersModalProps
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()); // Start of today
     
     if (type === 'active') {
-      // Convert lastActive to user's local timezone for comparison
+      // Convert lastActive to Date object, fallback to createdAt if lastActive is null
       const lastActiveDate = user.lastActive 
         ? new Date(user.lastActive) 
         : new Date(user.createdAt);
       
-      // Check if the user was active today (after start of today)
-      return lastActiveDate >= today;
+      // Set time to start of day for comparison
+      const lastActiveDay = new Date(
+        lastActiveDate.getFullYear(),
+        lastActiveDate.getMonth(),
+        lastActiveDate.getDate()
+      );
+      
+      // Check if the user was active today
+      return lastActiveDay.getTime() === today.getTime();
     } else {
       // New this week - within last 7 days
       const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
