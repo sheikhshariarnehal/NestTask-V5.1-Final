@@ -24,64 +24,83 @@ export function ActiveUsersModal({ users, type, onClose }: ActiveUsersModalProps
   return (
     <>
       <div 
-        className="fixed inset-0 bg-black bg-opacity-50 z-40"
+        className="fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm z-40"
         onClick={onClose}
       />
-      <div className="fixed inset-x-4 top-[10%] md:inset-x-auto md:left-1/2 md:-translate-x-1/2 md:w-full md:max-w-2xl bg-white rounded-2xl shadow-xl z-50 max-h-[80vh] overflow-hidden">
-        <div className="flex items-center justify-between p-6 border-b">
+      <div className="fixed inset-x-4 top-[5%] sm:top-[10%] md:inset-x-auto md:left-1/2 md:-translate-x-1/2 md:w-full md:max-w-2xl bg-white dark:bg-gray-800 rounded-2xl shadow-xl z-50 max-h-[90vh] overflow-hidden">
+        <div className="flex items-center justify-between p-4 sm:p-6 border-b dark:border-gray-700">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-50 rounded-lg">
+            <div className="p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
               {type === 'active' ? (
-                <UserCheck className="w-5 h-5 text-blue-600" />
+                <UserCheck className="w-5 h-5 text-blue-600 dark:text-blue-400" />
               ) : (
-                <Calendar className="w-5 h-5 text-blue-600" />
+                <Calendar className="w-5 h-5 text-blue-600 dark:text-blue-400" />
               )}
             </div>
             <div>
-              <h2 className="text-xl font-semibold text-gray-900">
+              <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">
                 {type === 'active' ? 'Active Users Today' : 'New Users This Week'}
               </h2>
-              <p className="text-sm text-gray-500">
-                {filteredUsers.length} users
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                {filteredUsers.length} {filteredUsers.length === 1 ? 'user' : 'users'}
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+            aria-label="Close modal"
           >
-            <X className="w-5 h-5 text-gray-500" />
+            <X className="w-5 h-5 text-gray-500 dark:text-gray-400" />
           </button>
         </div>
         
-        <div className="p-6 overflow-y-auto max-h-[calc(80vh-80px)]">
+        <div className="p-4 sm:p-6 overflow-y-auto max-h-[calc(90vh-80px)]">
           {filteredUsers.length === 0 ? (
-            <p className="text-center text-gray-500">No users found</p>
+            <div className="text-center py-8">
+              <div className="w-12 h-12 mx-auto mb-4 bg-blue-50 dark:bg-blue-900/20 rounded-full flex items-center justify-center">
+                {type === 'active' ? (
+                  <UserCheck className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                ) : (
+                  <Calendar className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                )}
+              </div>
+              <p className="text-gray-900 dark:text-white font-medium">No users found</p>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                {type === 'active' 
+                  ? 'No users have been active today' 
+                  : 'No new users have joined this week'}
+              </p>
+            </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-3">
               {filteredUsers.map((user) => (
                 <div
                   key={user.id}
-                  className="flex items-center justify-between p-4 bg-white border rounded-xl hover:shadow-md transition-shadow"
+                  className="flex flex-col sm:flex-row sm:items-center gap-3 p-3 bg-white dark:bg-gray-800 border dark:border-gray-700 rounded-xl hover:shadow-md transition-shadow"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white font-medium">
+                  <div className="flex items-center gap-3 flex-grow min-w-0">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white font-medium flex-shrink-0">
                       {user.name.charAt(0).toUpperCase()}
                     </div>
-                    <div>
-                      <h3 className="font-medium text-gray-900">{user.name}</h3>
-                      <p className="text-sm text-gray-500">{user.email}</p>
+                    <div className="min-w-0">
+                      <h3 className="font-medium text-gray-900 dark:text-white truncate">
+                        {user.name}
+                      </h3>
+                      <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+                        {user.email}
+                      </p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                  <div className="flex items-center justify-between sm:justify-end gap-3 ml-13 sm:ml-0">
+                    <span className={`px-2.5 py-1 text-xs font-medium rounded-full ${
                       user.role === 'admin' 
-                        ? 'bg-purple-100 text-purple-800' 
-                        : 'bg-blue-100 text-blue-800'
+                        ? 'bg-purple-100 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300' 
+                        : 'bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300'
                     }`}>
                       {user.role}
                     </span>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <span className="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
                       {new Date(type === 'active' ? user.lastActive || user.createdAt : user.createdAt)
                         .toLocaleString('en-US', {
                           month: 'short',
@@ -89,7 +108,7 @@ export function ActiveUsersModal({ users, type, onClose }: ActiveUsersModalProps
                           hour: '2-digit',
                           minute: '2-digit'
                         })}
-                    </p>
+                    </span>
                   </div>
                 </div>
               ))}
