@@ -6,6 +6,7 @@ export interface User {
   studentId?: string;
   role: 'user' | 'admin';
   createdAt: string;
+  lastActive?: string;
 }
 
 export interface AuthState {
