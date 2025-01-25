@@ -19,7 +19,8 @@ export function ActiveUsersModal({ users, type, onClose }: ActiveUsersModalProps
       return userDate >= today;
     } else {
       // New this week - within last 7 days
-      const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const weekAgo = new Date();
+      weekAgo.setDate(weekAgo.getDate() - 7);
       return userDate >= weekAgo;
     }
   });
