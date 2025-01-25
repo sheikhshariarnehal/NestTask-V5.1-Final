@@ -9,22 +9,18 @@ interface ActiveUsersModalProps {
 
 export function ActiveUsersModal({ users, type, onClose }: ActiveUsersModalProps) {
   const filteredUsers = users.filter(user => {
+    const userDate = new Date(type === 'active' ? user.lastActive || user.createdAt : user.createdAt);
     const now = new Date();
     
     if (type === 'active') {
-      // Check if user has been active today (has logged in or used the app)
-      if (!user.lastActive) return false;
-      
-      const lastActive = new Date(user.lastActive);
+      // Active today - check if lastActive is from today
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      
-      return lastActive >= today;
+      return userDate >= today;
     } else {
       // New this week - within last 7 days
-      const userCreated = new Date(user.createdAt);
       const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-      return userCreated >= weekAgo;
+      return userDate >= weekAgo;
     }
   });
 
@@ -46,7 +42,7 @@ export function ActiveUsersModal({ users, type, onClose }: ActiveUsersModalProps
             </div>
             <div>
               <h2 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">
-                {type === 'active' ? 'Users Active Today' : 'New Users This Week'}
+                {type === 'active' ? 'Active Users Today' : 'New Users This Week'}
               </h2>
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 {filteredUsers.length} {filteredUsers.length === 1 ? 'user' : 'users'}
@@ -75,7 +71,7 @@ export function ActiveUsersModal({ users, type, onClose }: ActiveUsersModalProps
               <p className="text-gray-900 dark:text-white font-medium">No users found</p>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                 {type === 'active' 
-                  ? 'No users have accessed the app today' 
+                  ? 'No users have been active today' 
                   : 'No new users have joined this week'}
               </p>
             </div>
@@ -108,12 +104,13 @@ export function ActiveUsersModal({ users, type, onClose }: ActiveUsersModalProps
                       {user.role}
                     </span>
                     <span className="text-xs text-gray-500 dark:text-gray-400 whitespace-nowrap">
-                      Last active: {new Date(user.lastActive || user.createdAt).toLocaleString('en-US', {
-                        month: 'short',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })}
+                      {new Date(type === 'active' ? user.lastActive || user.createdAt : user.createdAt)
+                        .toLocaleString('en-US', {
+                          month: 'short',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
                     </span>
                   </div>
                 </div>
