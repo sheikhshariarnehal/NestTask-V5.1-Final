@@ -13,11 +13,14 @@ export function ActiveUsersModal({ users, type, onClose }: ActiveUsersModalProps
     const now = new Date();
     
     if (type === 'active') {
-      // Active today - within last 24 hours
-      return (now.getTime() - userDate.getTime()) < (24 * 60 * 60 * 1000);
+      // Active today - check if lastActive is from today
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return userDate >= today;
     } else {
       // New this week - within last 7 days
-      return (now.getTime() - userDate.getTime()) < (7 * 24 * 60 * 60 * 1000);
+      const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      return userDate >= weekAgo;
     }
   });
 
