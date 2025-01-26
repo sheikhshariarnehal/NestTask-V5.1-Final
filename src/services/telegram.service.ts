@@ -58,20 +58,20 @@ export async function sendTelegramMessage(text: string, photo?: string) {
 
 export async function sendTaskNotification(task: Task) {
   // Get task status emoji
-  const getStatusEmoji = (status: string) => {
-    switch (status) {
-      case 'completed': return '✅';
-      case 'in-progress': return '⏳';
-      default: return '📝';
-    }
-  };
+  //const getStatusEmoji = (status: string) => {
+   // switch (status) {
+      //case 'completed': return '✅';
+    //  case 'in-progress': return '⏳';
+    //  default: return '📝';
+ //   }
+ // };
 
   // Get category emoji
   const getCategoryEmoji = (category: string) => {
     switch (category) {
       case 'presentation': return '🎯';
       case 'assignment': return '📚';
-      case 'quiz': return '❓';
+      case 'quiz': return '📖';
       case 'lab-report': return '🔬';
       case 'lab-final': return '🧪';
       case 'documents': return '📄';
