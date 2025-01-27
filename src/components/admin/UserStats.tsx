@@ -19,24 +19,47 @@ export function UserStats({ users, tasks }: UserStatsProps) {
   const [showTaskDetails, setShowTaskDetails] = useState(false);
   const [showActiveUsers, setShowActiveUsers] = useState<'active' | 'new' | null>(null);
 
+  // Filter active users based on lastActive timestamp
+  const getActiveUsers = () => {
+    const now = new Date();
+    const startOfToday = new Date(now);
+    startOfToday.setHours(0, 0, 0, 0);
+    
+    return users.filter(user => {
+      if (!user.lastActive) return false;
+      const lastActiveDate = new Date(user.lastActive);
+      return lastActiveDate >= startOfToday;
+    });
+  };
+
+  // Filter new users from the past week
+  const getNewUsers = () => {
+    const now = new Date();
+    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    return users.filter(user => new Date(user.createdAt) >= weekAgo);
+  };
+
+  const activeUsers = getActiveUsers();
+  const newUsers = getNewUsers();
+
   const statCards = [
     {
       title: 'Total Users',
-      value: stats.totalUsers,
+      value: users.length,
       icon: Users,
       color: 'blue' as const,
       onClick: () => setShowUserDetails(true)
     },
     {
       title: 'Active Today',
-      value: stats.activeToday,
+      value: activeUsers.length,
       icon: UserCheck,
       color: 'green' as const,
       onClick: () => setShowActiveUsers('active')
     },
     {
       title: 'New This Week',
-      value: stats.newThisWeek,
+      value: newUsers.length,
       icon: Clock,
       color: 'purple' as const,
       onClick: () => setShowActiveUsers('new')
@@ -78,7 +101,7 @@ export function UserStats({ users, tasks }: UserStatsProps) {
 
       {showActiveUsers && (
         <ActiveUsersModal
-          users={users}
+          users={showActiveUsers === 'active' ? activeUsers : newUsers}
           type={showActiveUsers}
           onClose={() => setShowActiveUsers(null)}
         />
