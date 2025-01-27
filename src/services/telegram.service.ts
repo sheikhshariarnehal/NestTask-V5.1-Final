@@ -56,16 +56,6 @@ export async function sendTelegramMessage(text: string, photo?: string) {
   }
 }
 
-export async function sendTaskNotification(task: Task) {
-  // Get task status emoji
-  //const getStatusEmoji = (status: string) => {
-   // switch (status) {
-      //case 'completed': return '✅';
-    //  case 'in-progress': return '⏳';
-    //  default: return '📝';
- //   }
- // };
-
   // Get category emoji
   const getCategoryEmoji = (category: string) => {
     switch (category) {
@@ -140,13 +130,11 @@ export async function sendAnnouncementNotification(announcement: Announcement) {
 
 ${announcement.content}
 
-⏰ Posted: ${formatDate(new Date(announcement.createdAt), 'MMMM d, yyyy HH:mm')}
 
-🔗 <b>Quick Links:</b>
-• View Details: ${APP_DOMAIN}
-• Announcements: ${APP_DOMAIN}/announcements
+🔗 <b>View full details:</b>
+•${APP_DOMAIN}
 
-#NestTask #Announcement #Update
+
 ⚡️ Stay updated with NestTask!`;
 
   return sendTelegramMessage(message, imageUrl);
