@@ -12,23 +12,24 @@ export function ActiveUsersModal({ users, type, onClose }: ActiveUsersModalProps
     if (!user.lastActive && !user.createdAt) return false;
     
     const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate()); // Start of today
     
     if (type === 'active') {
-      // Convert lastActive to Date object, fallback to createdAt if lastActive is null
+      // Convert lastActive to Date object
       const lastActiveDate = user.lastActive 
         ? new Date(user.lastActive) 
-        : new Date(user.createdAt);
+        : null;
       
-      // Set time to start of day for comparison
-      const lastActiveDay = new Date(
-        lastActiveDate.getFullYear(),
-        lastActiveDate.getMonth(),
-        lastActiveDate.getDate()
-      );
+      if (!lastActiveDate) return false;
+
+      // Get start and end of today in user's local timezone
+      const startOfToday = new Date(now);
+      startOfToday.setHours(0, 0, 0, 0);
       
-      // Check if the user was active today
-      return lastActiveDay.getTime() === today.getTime();
+      const endOfToday = new Date(now);
+      endOfToday.setHours(23, 59, 59, 999);
+      
+      // Check if the user was active anytime today
+      return lastActiveDate >= startOfToday && lastActiveDate <= endOfToday;
     } else {
       // New this week - within last 7 days
       const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
