@@ -1,25 +1,22 @@
 import { useState } from 'react';
-import { Users, UserCheck, Clock, ListTodo } from 'lucide-react';
-import { useUserStats } from '../../hooks/useUserStats';
-import { UserStatsCard } from './stats/UserStatsCard';
-import { UserDetailsModal } from './users/UserDetailsModal';
-import { TaskDetailsModal } from './task/TaskDetailsModal';
+import { Users, UserCheck, Clock } from 'lucide-react';
+import { Card } from '../ui/card';
 import { ActiveUsersModal } from './stats/ActiveUsersModal';
+import { UserDetailsModal } from './stats/UserDetailsModal';
 import type { User } from '../../types/auth';
-import type { Task } from '../../types';
+import type { UserStats as UserStatsType } from '../../types/stats';
 
 interface UserStatsProps {
   users: User[];
-  tasks: Task[];
+  stats: UserStatsType;
 }
 
-export function UserStats({ users, tasks }: UserStatsProps) {
-  const { stats, loading } = useUserStats();
+export function UserStats({ users, stats }: UserStatsProps) {
   const [showUserDetails, setShowUserDetails] = useState(false);
-  const [showTaskDetails, setShowTaskDetails] = useState(false);
-  const [showActiveUsers, setShowActiveUsers] = useState<'active' | 'new' | null>(null);
+  const [showActiveUsers, setShowActiveUsers] = useState<'active' | 'new' | null>(
+    null
+  );
 
-  // Filter active users based on lastActive timestamp
   const getActiveUsers = () => {
     const now = new Date();
     const startOfToday = new Date(now);
@@ -32,7 +29,6 @@ export function UserStats({ users, tasks }: UserStatsProps) {
     });
   };
 
-  // Filter new users from the past week
   const getNewUsers = () => {
     const now = new Date();
     const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
@@ -63,40 +59,39 @@ export function UserStats({ users, tasks }: UserStatsProps) {
       icon: Clock,
       color: 'purple' as const,
       onClick: () => setShowActiveUsers('new')
-    },
-    {
-      title: 'Total Tasks',
-      value: tasks.length,
-      icon: ListTodo,
-      color: 'indigo' as const,
-      onClick: () => setShowTaskDetails(true)
     }
   ];
 
   return (
     <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {statCards.map((card) => (
-          <UserStatsCard
-            key={card.title}
-            {...card}
-            loading={loading}
-          />
+      <div className="grid gap-4 md:grid-cols-3">
+        {statCards.map(({ title, value, icon: Icon, color, onClick }) => (
+          <Card
+            key={title}
+            className="p-4 cursor-pointer transition-transform hover:scale-[1.02]"
+            onClick={onClick}
+          >
+            <div className="flex items-center gap-4">
+              <div
+                className={`p-2 bg-${color}-50 dark:bg-${color}-900/20 rounded-lg`}
+              >
+                <Icon
+                  className={`w-5 h-5 text-${color}-600 dark:text-${color}-400`}
+                />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                  {title}
+                </p>
+                <p className="text-2xl font-semibold">{value}</p>
+              </div>
+            </div>
+          </Card>
         ))}
       </div>
 
       {showUserDetails && (
-        <UserDetailsModal
-          users={users}
-          onClose={() => setShowUserDetails(false)}
-        />
-      )}
-
-      {showTaskDetails && (
-        <TaskDetailsModal
-          tasks={tasks}
-          onClose={() => setShowTaskDetails(false)}
-        />
+        <UserDetailsModal users={users} onClose={() => setShowUserDetails(false)} />
       )}
 
       {showActiveUsers && (
