@@ -22,22 +22,30 @@ export async function createAnnouncement(announcement: NewAnnouncement) {
   if (!user) throw new Error('Not authenticated');
 
   try {
+    const timestamp = new Date().toISOString();
+    
     const { data, error } = await supabase
       .from('announcements')
       .insert({
         title: announcement.title,
         content: announcement.content,
-        created_by: user.id
+        created_by: user.id,
+        created_at: timestamp
       })
       .select()
       .single();
 
     if (error) throw error;
 
-    // Send Telegram notification
-    await sendAnnouncementNotification(data as Announcement);
+    const newAnnouncement = {
+      ...data,
+      createdAt: timestamp
+    } as Announcement;
 
-    return data as Announcement;
+    // Send Telegram notification
+    await sendAnnouncementNotification(newAnnouncement);
+
+    return newAnnouncement;
   } catch (error) {
     console.error('Error creating announcement:', error);
     throw error;
