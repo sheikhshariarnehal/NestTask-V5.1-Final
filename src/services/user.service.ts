@@ -12,7 +12,7 @@ export async function fetchUsers(): Promise<User[]> {
 
     const { data, error } = await supabase
       .from('users')
-      .select('*')
+      .select('id, email, name, role, created_at, last_active')
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -25,7 +25,8 @@ export async function fetchUsers(): Promise<User[]> {
       email: user.email || '',
       name: user.name || user.email?.split('@')[0] || '',
       role: user.role || 'user',
-      createdAt: user.created_at
+      createdAt: user.created_at,
+      lastActive: user.last_active
     })) || [];
   } catch (error) {
     console.error('Error fetching users:', error);
