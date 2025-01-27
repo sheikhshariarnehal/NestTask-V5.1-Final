@@ -1,5 +1,6 @@
 import { Check, Trash2, Megaphone, AlertCircle, Bell } from 'lucide-react';
 import type { Notification } from '../../hooks/useNotifications';
+import { parseLinks } from '../../utils/linkParser';
 
 interface NotificationItemProps {
   notification: Notification;
@@ -8,6 +9,9 @@ interface NotificationItemProps {
 }
 
 export function NotificationItem({ notification, onMarkAsRead, onClear }: NotificationItemProps) {
+  // Parse links in the message
+  const messageParts = parseLinks(notification.message);
+
   return (
     <div
       className={`
@@ -56,9 +60,24 @@ export function NotificationItem({ notification, onMarkAsRead, onClear }: Notifi
             )}
           </div>
           
-          <p className="text-sm text-gray-600 dark:text-gray-300 mb-3 break-words">
-            {notification.message}
-          </p>
+          <div className="text-sm text-gray-600 dark:text-gray-300 mb-3 break-words">
+            {messageParts.map((part, index) => 
+              part.type === 'link' ? (
+                <a
+                  key={index}
+                  href={part.content}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 dark:text-blue-400 hover:underline break-all"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {part.content}
+                </a>
+              ) : (
+                <span key={index}>{part.content}</span>
+              )
+            )}
+          </div>
           
           <div className="flex items-center justify-between gap-4">
             <time className="text-xs text-gray-500 dark:text-gray-400">
