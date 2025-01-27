@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from './hooks/useAuth';
 import { useTasks } from './hooks/useTasks';
 import { useUsers } from './hooks/useUsers';
@@ -12,7 +12,7 @@ import { UpcomingPage } from './pages/UpcomingPage';
 import { SearchPage } from './pages/SearchPage';
 import { NotificationsPage } from './pages/NotificationsPage';
 import { NotificationPanel } from './components/notifications/NotificationPanel';
-import { LoadingSpinner } from './components/LoadingSpinner';
+import { LoadingScreen } from './components/LoadingScreen';
 import { InstallPWA } from './components/InstallPWA';
 import { ListTodo, CheckCircle2, Clock, AlertCircle } from 'lucide-react';
 import { TaskCategories } from './components/task/TaskCategories';
@@ -38,11 +38,21 @@ export default function App() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<TaskCategory | null>(null);
   const [statFilter, setStatFilter] = useState<StatFilter>('all');
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulate initial loading
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const hasUnreadNotifications = unreadCount > 0;
 
-  if (authLoading || (user?.role === 'admin' && usersLoading)) {
-    return <LoadingSpinner />;
+  if (isLoading || authLoading || (user?.role === 'admin' && usersLoading)) {
+    return <LoadingScreen />;
   }
 
   if (!user) {
@@ -138,7 +148,7 @@ export default function App() {
       
       <main className="max-w-7xl mx-auto px-4 py-20 pb-24">
         {tasksLoading ? (
-          <LoadingSpinner />
+          <LoadingScreen />
         ) : (
           <>
             {activePage === 'upcoming' ? (
