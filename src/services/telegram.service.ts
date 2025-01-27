@@ -56,21 +56,31 @@ export async function sendTelegramMessage(text: string, photo?: string) {
   }
 }
 
-  // Get category emoji
-  const getCategoryEmoji = (category: string) => {
-    switch (category) {
-      case 'presentation': return '🎯';
-      case 'assignment': return '📚';
-      case 'quiz': return '📖';
-      case 'lab-report': return '🔬';
-      case 'lab-final': return '🧪';
-      case 'documents': return '📄';
-      case 'blc': return '🏢';
-      case 'groups': return '👥';
-      default: return '📋';
-    }
-  };
+// Get status emoji
+const getStatusEmoji = (status: string) => {
+  switch (status) {
+    case 'completed': return '✅';
+    case 'in-progress': return '⏳';
+    default: return '📝';
+  }
+};
 
+// Get category emoji
+const getCategoryEmoji = (category: string) => {
+  switch (category) {
+    case 'presentation': return '🎯';
+    case 'assignment': return '📚';
+    case 'quiz': return '📖';
+    case 'lab-report': return '🔬';
+    case 'lab-final': return '🧪';
+    case 'documents': return '📄';
+    case 'blc': return '🏢';
+    case 'groups': return '👥';
+    default: return '📋';
+  }
+};
+
+export async function sendTaskNotification(task: Task) {
   // Extract file URLs and get the first image
   const fileUrls = task.description.match(/\[.*?\]\((.*?)\)/g)?.map(match => {
     const [, url] = match.match(/\[.*?\]\((.*?)\)/) || [];
@@ -110,8 +120,8 @@ ${processDescription(task.description)}
 ⏰ Created: ${formatDate(new Date(task.createdAt), 'MMMM d, yyyy HH:mm')}
 ${task.isAdminTask ? '👑 <b>Admin Task</b>' : ''}
 
-🔗 <b>Quick Links:</b>
-• View Task: ${APP_DOMAIN}
+🔗 <b>View full details:</b>
+• ${APP_DOMAIN}
 
 #NestTask #${task.category} ${task.isAdminTask ? '#AdminTask' : ''} #Task
 ${task.isAdminTask ? '\n⚡️ Stay updated with NestTask!' : ''}`;
@@ -132,7 +142,7 @@ ${announcement.content}
 
 
 🔗 <b>View full details:</b>
-•${APP_DOMAIN}
+• ${APP_DOMAIN}
 
 
 ⚡️ Stay updated with NestTask!`;
