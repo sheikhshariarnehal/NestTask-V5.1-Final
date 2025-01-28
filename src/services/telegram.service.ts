@@ -56,14 +56,6 @@ export async function sendTelegramMessage(text: string, photo?: string) {
   }
 }
 
-// Get status emoji
-//const getStatusEmoji = (status: string) => {
- // switch (status) {
-   // case 'completed': return '✅';
-  //  case 'in-progress': return '⏳';
-   // default: return '📝';
-  }
-};
 
 // Get category emoji
 const getCategoryEmoji = (category: string) => {
