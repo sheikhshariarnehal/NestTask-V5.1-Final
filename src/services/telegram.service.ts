@@ -60,13 +60,13 @@ export async function sendTelegramMessage(text: string, photo?: string) {
 // Get category emoji
 const getCategoryEmoji = (category: string) => {
   switch (category) {
-    case 'presentation': return '🎯';
-    case 'assignment': return '📚';
-    case 'quiz': return '📖';
+    case 'presentation': return '👔';
+    case 'assignment': return '📃';
+    case 'quiz': return '📚';
     case 'lab-report': return '🔬';
     case 'lab-final': return '🧪';
     case 'documents': return '📄';
-    case 'blc': return '🏢';
+    case 'blc': return '🗃️';
     case 'groups': return '👥';
     default: return '📋';
   }
@@ -109,7 +109,6 @@ ${processDescription(task.description)}
 
 🏷️ Category: #${task.category}
 📅 Due Date: ${formatDate(new Date(task.dueDate), 'MMMM d, yyyy')}
-
 
 
 🌐 <b>View full details:</b>
