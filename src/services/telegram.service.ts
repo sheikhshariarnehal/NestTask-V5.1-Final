@@ -102,17 +102,17 @@ export async function sendTaskNotification(task: Task) {
 🔔 <b>New ${task.isAdminTask ? 'Admin ' : ''}Task Alert!</b>
 
 ${getCategoryEmoji(task.category)} <b>${task.name}</b>
-${getStatusEmoji(task.status)} Status: ${task.status === 'my-tasks' ? 'To Do' : task.status === 'in-progress' ? 'In Progress' : 'Completed'}
+
 
 📝 <b>Description:</b>
 ${processDescription(task.description)}
 
 🏷️ Category: #${task.category}
 📅 Due Date: ${formatDate(new Date(task.dueDate), 'MMMM d, yyyy')}
-⏰ Created: ${formatDate(new Date(task.createdAt), 'MMMM d, yyyy HH:mm')}
 
 
-🔗 <b>View full details:</b>
+
+🌐 <b>View full details:</b>
 • ${APP_DOMAIN}
 
 ${task.isAdminTask ? '\n⚡️ Stay updated with NestTask!' : ''}`;
@@ -132,7 +132,7 @@ export async function sendAnnouncementNotification(announcement: Announcement) {
 ${announcement.content}
 
 
-🔗 <b>View full details:</b>
+🌐 <b>View full details:</b>
 • ${APP_DOMAIN}
 
 
