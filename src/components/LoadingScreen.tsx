@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 
 export function LoadingScreen() {
   return (
-    <div className="fixed inset-0 bg-[#f8fafc] dark:bg-gray-900 flex items-center justify-center">
+    <div className="fixed inset-0 bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
       {/* Main Container */}
       <div className="relative w-full max-w-md p-8 flex flex-col items-center">
         {/* Logo Animation */}
@@ -16,15 +16,15 @@ export function LoadingScreen() {
             <motion.div
               animate={{ rotate: 360 }}
               transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-              className="absolute inset-0 rounded-full border-t-4 border-primary-500"
+              className="absolute inset-0 rounded-full border-t-4 border-blue-500 dark:border-blue-400"
             />
             <motion.div
               animate={{ rotate: -360 }}
               transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-              className="absolute inset-0 rounded-full border-r-4 border-primary-400 rotate-45"
+              className="absolute inset-0 rounded-full border-r-4 border-blue-400 dark:border-blue-500 rotate-45"
             />
             <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-2xl font-bold text-primary-600 dark:text-primary-400">NT</span>
+              <span className="text-2xl font-bold text-blue-600 dark:text-blue-400">NT</span>
             </div>
           </div>
         </motion.div>
@@ -34,7 +34,7 @@ export function LoadingScreen() {
           initial={{ width: "0%" }}
           animate={{ width: "100%" }}
           transition={{ duration: 2, repeat: Infinity }}
-          className="h-1 bg-gradient-to-r from-primary-400 to-primary-600 rounded-full w-64 mb-6"
+          className="h-1 bg-gradient-to-r from-blue-400 to-blue-600 dark:from-blue-500 dark:to-blue-400 rounded-full w-64 mb-6"
         />
 
         {/* Loading Text */}
@@ -82,7 +82,7 @@ export function LoadingScreen() {
             }}
             className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05]"
             style={{
-              backgroundImage: 'radial-gradient(circle at center, #4f46e5 1px, transparent 1px)',
+              backgroundImage: 'radial-gradient(circle at center, #3b82f6 1px, transparent 1px)',
               backgroundSize: '40px 40px',
             }}
           />
