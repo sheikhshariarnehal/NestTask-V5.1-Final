@@ -57,11 +57,11 @@ export async function sendTelegramMessage(text: string, photo?: string) {
 }
 
 // Get status emoji
-const getStatusEmoji = (status: string) => {
-  switch (status) {
-    case 'completed': return '✅';
-    case 'in-progress': return '⏳';
-    default: return '📝';
+//const getStatusEmoji = (status: string) => {
+ // switch (status) {
+   // case 'completed': return '✅';
+  //  case 'in-progress': return '⏳';
+   // default: return '📝';
   }
 };
 
@@ -123,7 +123,6 @@ ${task.isAdminTask ? '👑 <b>Admin Task</b>' : ''}
 🔗 <b>View full details:</b>
 • ${APP_DOMAIN}
 
-#NestTask #${task.category} ${task.isAdminTask ? '#AdminTask' : ''} #Task
 ${task.isAdminTask ? '\n⚡️ Stay updated with NestTask!' : ''}`;
 
   return sendTelegramMessage(message, imageUrl);
