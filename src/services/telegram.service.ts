@@ -99,7 +99,7 @@ export async function sendTaskNotification(task: Task) {
   };
 
   const message = `
-🔔 <b>New ${task.isAdminTask ? 'Admin ' : ''}Task Alert!</b>
+
 
 ${getCategoryEmoji(task.category)} <b>${task.name}</b>
 
