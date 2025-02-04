@@ -1,5 +1,14 @@
 import { useState } from 'react';
-import { Calendar, Tag, AlignLeft, Plus, Link2, ListTodo, Upload, X } from 'lucide-react';
+import { 
+  Tag, 
+  Calendar, 
+  AlignLeft, 
+  Plus, 
+  Link2, 
+  ListTodo, 
+  Upload, 
+  X 
+} from 'lucide-react';
 import type { NewTask, TaskCategory } from '../../../types/task';
 
 interface TaskFormProps {
@@ -128,6 +137,7 @@ export function TaskForm({ onSubmit }: TaskFormProps) {
                 <option value="quiz">Quiz</option>
                 <option value="lab-report">Lab Report</option>
                 <option value="lab-final">Lab Final</option>
+                <option value="lab-performance">Lab Performance</option>
                 <option value="documents">Documents</option>
                 <option value="blc">BLC</option>
                 <option value="groups">Groups</option>
