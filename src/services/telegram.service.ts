@@ -138,8 +138,7 @@ ${processDescription(task.description)}
 📅 <b>Due Date:</b> ${formatDate(new Date(task.dueDate), 'MMMM d, yyyy')}
 
 
-🌐 <b>View full details:</b>
-• ${APP_DOMAIN}`;
+🌐 <b><a href="${APP_DOMAIN}">View full details</a></b>`;
 
   return sendTelegramMessage(message);
 }
@@ -166,8 +165,7 @@ export async function sendAnnouncementNotification(announcement: Announcement) {
 ${announcement.content}
 
 
-🌐 <b>View full details:</b>
-• ${APP_DOMAIN}`;
+🌐 <b><a href="${APP_DOMAIN}">View full details</a></b>`;
 
   return sendTelegramMessage(message, imageUrl);
 }
