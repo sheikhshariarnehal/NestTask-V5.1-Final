@@ -4,6 +4,7 @@ export type TaskCategory =
   | 'quiz' 
   | 'lab-report' 
   | 'lab-final' 
+  | 'lab-performance'
   | 'task' 
   | 'documents'
   | 'blc'
