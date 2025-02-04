@@ -53,7 +53,7 @@ export async function sendTelegramMessage(text: string, photo?: string) {
     } else {
       const requestBody = {
         chat_id: TELEGRAM_CHAT_ID,
-       // message_thread_id: 204,  // Correct topic ID from the URL
+        message_thread_id: 204,  // Correct topic ID from the URL
         text,
         parse_mode: 'HTML',
         disable_web_page_preview: false,
@@ -128,19 +128,18 @@ export async function sendTaskNotification(task: Task) {
     return withLinks.replace(/\n/g, '\n');
   };
 
-  const message = `━━━━━━━━━ Title ━━━━━━━━━
-📌 <b>${task.name}</b>
-━━━━━━━━━━━━━━━━━━━━━
-📝 <b>Description</b>
+  const message = `
+🎯 <b>${task.name}</b>
+
+💬 <b>Description:</b>
 ${processDescription(task.description)}
-━━━━━━━━ Details ━━━━━━━━
+
 🏷️ <b>Category:</b> #${task.category}
 📅 <b>Due Date:</b> ${formatDate(new Date(task.dueDate), 'MMMM d, yyyy')}
 
-━━━━━━━View Task━━━━━━━━
-🌐 ${APP_DOMAIN}
-━━━━━━━━━━━━━━━━━━━━━
-<i>Powered by NestTask</i>${task.isAdminTask ? ' ⚡️' : ''}`;
+
+🌐 <b>View full details:</b>
+• ${APP_DOMAIN}`;
 
   return sendTelegramMessage(message);
 }
@@ -160,17 +159,15 @@ export async function sendAnnouncementNotification(announcement: Announcement) {
   // Try to find an image URL in the announcement content
   const imageUrl = announcement.content.match(/https?:\/\/[^\s]+\.(jpg|jpeg|png|gif|webp)/i)?.[0];
 
-  const message = `━━━━━━━━━ NestTask ━━━━━━━━━
+  const message = `
 
 🎯 <b>${announcement.title}</b>
-━━━━━━━━━━━━━━━━━━━━━
 
 ${announcement.content}
 
-━━━━━━━View Task━━━━━━━━
-🌐 ${APP_DOMAIN}
-━━━━━━━━━━━━━━━━━━━━━
-<i>Powered by NestTask</i>`;
+
+🌐 <b>View full details:</b>
+• ${APP_DOMAIN}`;
 
   return sendTelegramMessage(message, imageUrl);
 }
