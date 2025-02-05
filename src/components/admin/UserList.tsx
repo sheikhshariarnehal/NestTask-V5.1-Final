@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Trash2, AlertTriangle } from 'lucide-react';
+import { Trash2, AlertTriangle, Search } from 'lucide-react';
 import { User } from '../../types/auth';
 
 interface UserListProps {
@@ -12,6 +12,7 @@ export function UserList({ users, onDeleteUser }: UserListProps) {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const handleDeleteClick = (user: User) => {
     setSelectedUser(user);
@@ -35,9 +36,30 @@ export function UserList({ users, onDeleteUser }: UserListProps) {
     }
   };
 
+  // Filter users based on search term
+  const filteredUsers = users.filter(user => 
+    user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.role.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <>
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
+        {/* Search Bar */}
+        <div className="p-4 border-b dark:border-gray-700">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search users by name, email, or role..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400"
+            />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+          </div>
+        </div>
+
         {/* Desktop view */}
         <div className="hidden md:block">
           <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
@@ -61,7 +83,7 @@ export function UserList({ users, onDeleteUser }: UserListProps) {
               </tr>
             </thead>
             <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-              {users.map((user) => (
+              {filteredUsers.map((user) => (
                 <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-medium text-gray-900 dark:text-white">{user.name}</div>
@@ -101,7 +123,7 @@ export function UserList({ users, onDeleteUser }: UserListProps) {
         {/* Mobile view */}
         <div className="block md:hidden">
           <div className="divide-y divide-gray-200 dark:divide-gray-700">
-            {users.map((user) => (
+            {filteredUsers.map((user) => (
               <div key={user.id} className="p-4 space-y-2">
                 <div className="flex justify-between items-start">
                   <div>
@@ -134,6 +156,13 @@ export function UserList({ users, onDeleteUser }: UserListProps) {
             ))}
           </div>
         </div>
+
+        {/* No Results Message */}
+        {filteredUsers.length === 0 && (
+          <div className="p-8 text-center">
+            <p className="text-gray-500 dark:text-gray-400">No users found matching your search.</p>
+          </div>
+        )}
       </div>
 
       {/* Confirmation Modal */}
